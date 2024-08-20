@@ -38,7 +38,9 @@ dependencies:
   get: ^4.6.6
   dio: ^5.6.0
   calendar_date_picker2: ^1.1.5
-  easy_folder_picker: ^1.3.3
+  # easy_folder_picker: ^1.3.3
+  file_selector: ^1.0.3
+  flutter_dropzone: ^4.0.2
 
 dev_dependencies:
   flutter_test:
