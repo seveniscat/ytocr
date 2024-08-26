@@ -121,10 +121,10 @@ class HomePage extends GetView<HomeController> {
 
   Widget _pickerWrapper() {
     return Container(
-      height: 44,
+      height: 38,
       decoration: BoxDecoration(
         border: Border.all(),
-        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(4.0)),
       ),
       child: Row(
         children: [
@@ -139,8 +139,8 @@ class HomePage extends GetView<HomeController> {
   Widget _keywordInput() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      width: 300,
-      height: 44,
+      width: 320,
+      height: 38,
       decoration: BoxDecoration(
         border: Border.all(),
         borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -204,7 +204,7 @@ class HomePage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
-      init: HomeController(),
+      // init: HomeController(),
       id: "home",
       builder: (_) {
         return Scaffold(
