@@ -3,13 +3,17 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:ytocr/pages/Home/controller.dart';
 
 Widget card(String text, {required Widget child}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(text),
+      Text(
+        text,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
       const SizedBox(
         height: 15,
       ),
@@ -134,6 +138,37 @@ class _OcrViewState extends State<OcrView> {
     controller.addPath(directoryPath);
   }
 
+  String? formatDate(String? dateStr) {
+    // 2024-08-31T11:22:18.4846088+08:00
+    if (dateStr == null) return null;
+    if (dateStr.isEmpty) return null;
+    try {
+      // final formatter = DateFormat('yyyy-MM-ddTHH:mm:ss');
+      final date = DateTime.parse(dateStr).toUtc();
+      final format = DateFormat('yyyy-MM-dd HH:mm:ss');
+      return format.format(date);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _item(String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+      child: Row(
+        children: [
+          Text(title),
+          Expanded(
+            child: Text(
+              subtitle,
+              style: const TextStyle(color: Colors.black54),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _rightView() {
     return card(
       'OCR结果',
@@ -141,17 +176,39 @@ class _OcrViewState extends State<OcrView> {
           id: 'result',
           builder: (controller) {
             final result = controller.ocrResult;
+            final total = result['total'];
+            final succ = result['success'] ?? 0;
+            final fail = result['fail'] ?? 0;
+            String status = "-";
+            if (total != null && total > 0) {
+              if (total == (succ + fail)) {
+                status =
+                    "识别完成  成功率:${((succ / total) * 100).toStringAsFixed(2)}%";
+              } else {
+                status = "识别中";
+              }
+            }
             return Padding(
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('文件夹路径：${controller.resultPath.value}'),
-                  if (result != null) ...[
-                    TextButton(onPressed: () {}, child: const Text('下载结果文件')),
+                  _item('当前识别路径：', controller.resultPath.value),
+                  if (result.isNotEmpty) ...[
                     Text(
-                        "共${result['total'] ?? '-'}条数据，成功${result['success'] ?? '-'}条，失败${result['fail'] ?? '-'}条"),
-                    Text("更新时间:${result['updateAt'] ?? '-'}")
+                        "共${total ?? '-'}条数据，成功${succ ?? '-'}条，失败${fail ?? '-'}条"),
+                    _item("识别状态：", status ?? '-'),
+                    _item("更新时间：", formatDate(result['updateAt']) ?? '-'),
+                    _item("创建时间：", formatDate(result['createAt']) ?? '-'),
+                  ] else if (controller.resultPath.value.isNotEmpty) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 18.0),
+                      child: Center(
+                          child: Text(
+                        '未查询到识别记录',
+                        style: TextStyle(color: Colors.grey),
+                      )),
+                    )
                   ],
                   const SizedBox(
                     height: 50,
@@ -165,16 +222,21 @@ class _OcrViewState extends State<OcrView> {
                   Expanded(
                     child: Align(
                       alignment: Alignment.bottomCenter,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Get.find<HomeController>().startOCR();
-                        },
-                        child: const Text(
-                          '保存到本地',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      child: TextButton(
+                          onPressed: () {
+                            controller.download1(result['taskId']);
+                          },
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '下载结果文件',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Icon(Icons.cloud_download_outlined),
+                            ],
+                          )),
                     ),
                   ),
                 ],

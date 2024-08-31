@@ -1,6 +1,7 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:ytocr/pages/home/widgets/ocrview.dart';
 import 'package:ytocr/pages/home/widgets/resultview.dart';
 
@@ -52,6 +53,7 @@ final config = CalendarDatePicker2WithActionButtonsConfig(
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
+
   // 主视图
   Widget _buildView() {
     return Column(
@@ -167,6 +169,18 @@ class HomePage extends GetView<HomeController> {
     );
   }
 
+  String? formatDate(DateTime? date) {
+    // 2024-08-31T11:22:18.4846088+08:00
+    if (date == null) return null;
+    try {
+      // final formatter = DateFormat('yyyy-MM-ddTHH:mm:ss');
+      final format = DateFormat('yyyy-MM-dd');
+      return format.format(date);
+    } catch (_) {
+      return null;
+    }
+  }
+
   Widget _header() {
     return SizedBox(
       height: 64,
@@ -178,7 +192,12 @@ class HomePage extends GetView<HomeController> {
           _keywordInput(),
           TextButton(
               onPressed: () {
-                controller.showPage(1);
+                final start =
+                    '${formatDate(controller.startPickerValue[0]) ?? ''} 00:00:00';
+                final end =
+                    '${formatDate(controller.endPickerValue[0]) ?? ''} 23:59:59';
+                controller.checkRecordPage(start: start, end: end);
+                // controller.showPage(1);
               },
               child: Text('查询'))
         ],
