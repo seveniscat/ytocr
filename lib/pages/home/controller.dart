@@ -16,7 +16,8 @@ class HomeController extends GetxController {
   final ocrResult = <String, dynamic>{}.obs;
   final recordResult = <dynamic>[].obs;
 
-  final dio = Dio(BaseOptions(//
+  final dio = Dio(BaseOptions(
+    //
     // baseUrl: 'http://119.45.248.52:8080/',
     baseUrl: 'http://127.0.0.1:8080/',
     receiveDataWhenStatusError: true,
@@ -44,9 +45,7 @@ class HomeController extends GetxController {
     if (dirs.isEmpty) return;
     try {
       final path = dirs[0];
-      final param = {
-        'filedir': "C:\\Users\\李子晴\\Desktop\\images"
-      }; // C:\Users\李子晴\Desktop\images
+      final param = {'filedir': path}; // C:\Users\李子晴\Desktop\images
       final res = await dio.post<Map<String, dynamic>>('/api/v1/task/submit',
           queryParameters: param);
       final taskId = res.data?['taskId'] as String?;
