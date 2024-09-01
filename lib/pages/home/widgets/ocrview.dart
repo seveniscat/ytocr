@@ -143,7 +143,6 @@ class _OcrViewState extends State<OcrView> {
     if (dateStr == null) return null;
     if (dateStr.isEmpty) return null;
     try {
-      // final formatter = DateFormat('yyyy-MM-ddTHH:mm:ss');
       final date = DateTime.parse(dateStr).toUtc();
       final format = DateFormat('yyyy-MM-dd HH:mm:ss');
       return format.format(date);

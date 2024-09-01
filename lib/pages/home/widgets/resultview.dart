@@ -13,6 +13,7 @@ class ResultView extends StatefulWidget {
 
 class _ResultViewState extends State<ResultView> {
   final homeController = Get.find<HomeController>();
+
   String? formatDate(String? dateStr) {
     // 2024-08-31T11:22:18.4846088+08:00
     if (dateStr == null) return null;
@@ -81,7 +82,10 @@ class _ResultViewState extends State<ResultView> {
                                     ),
                                     Text(
                                         "共${total ?? '-'}条数据，成功${succ ?? '-'}条，失败${fail ?? '-'}条"),
-                                    Text(status)
+                                    Text(status),
+                                    TextButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.cloud_done))
                                   ],
                                 ),
                                 subtitle: Row(

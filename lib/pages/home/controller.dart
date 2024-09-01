@@ -132,7 +132,8 @@ class HomeController extends GetxController {
           onReceiveProgress: _onDownloadProgress);
       final filename = '票据识别-$taskId-${DateTime.now().toString()}.xlsx';
       final directory = await _getDownloadDirectory();
-      final filePath = '${directory.path}/$filename';
+      final str = Platform.isWindows ? '\\' : '/';
+      final filePath = '${directory.path}$str$filename';
       final file = File(filePath);
       await file.writeAsBytes(response.data);
       await launchUrl(Uri.file(directory.path));
