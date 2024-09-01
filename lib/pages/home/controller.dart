@@ -45,6 +45,7 @@ class HomeController extends GetxController {
     if (dirs.isEmpty) return;
     try {
       final path = dirs[0];
+      // const path = 'C:\\Users\\李子晴\\Desktop\\images';
       final param = {'filedir': path}; // C:\Users\李子晴\Desktop\images
       final res = await dio.post<Map<String, dynamic>>('/api/v1/task/submit',
           queryParameters: param);
@@ -130,7 +131,7 @@ class HomeController extends GetxController {
             receiveTimeout: const Duration(seconds: 10), // 设置接收超时时间
           ),
           onReceiveProgress: _onDownloadProgress);
-      final filename = '${'票据识别-$taskId-${DateTime.now().toString()}'.replaceAll(RegExp(r'[ .]'), '')}.xlsx';
+      final filename = '${'票据识别-$taskId-${DateTime.now().toString()}'.replaceAll(RegExp(r'[ .]'), '_')}.xlsx';
       final directory = await _getDownloadDirectory();
       final str = Platform.isWindows ? '\\' : '/';
       final filePath = '${directory.path}$str$filename';
@@ -144,6 +145,7 @@ class HomeController extends GetxController {
       Get.showSnackbar(GetSnackBar(
         title: '下载失败',
         message: '失败原因: $e',
+        duration: const Duration(seconds: 2),
       ));
     }
   }
