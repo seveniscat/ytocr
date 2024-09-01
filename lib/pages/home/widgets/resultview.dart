@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ytocr/pages/Home/index.dart';
@@ -76,7 +77,9 @@ class _ResultViewState extends State<ResultView> {
                                       children: [
                                         Text('批次号: ${item?['taskId']}'),
                                         TextButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Clipboard.setData(ClipboardData(text: item?['taskId'] ?? ''));
+                                            },
                                             child: Icon(Icons.copy)),
                                       ],
                                     ),
@@ -84,8 +87,10 @@ class _ResultViewState extends State<ResultView> {
                                         "共${total ?? '-'}条数据，成功${succ ?? '-'}条，失败${fail ?? '-'}条"),
                                     Text(status),
                                     TextButton(
-                                        onPressed: () {},
-                                        child: Icon(Icons.cloud_done))
+                                        onPressed: () {
+                                          controller.download1(item?['taskId']);
+                                        },
+                                        child: Icon(Icons.cloud_download_outlined))
                                   ],
                                 ),
                                 subtitle: Row(
