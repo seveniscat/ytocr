@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -83,24 +84,6 @@ class HomeController extends GetxController {
     recordResult.value = list ?? [];
   }
 
-  // // 下载识别结果
-  // download(String? taskId) async {
-  //   if (taskId == null) return;
-  //   if (taskId.isEmpty) return;
-  //   try {
-  //     final downloadsDir = await getDownloadsDirectory();
-  //     await dio.download('api/v1/task/$taskId/download',
-  //         '/Users/bingz/Downloads/temp1234.xlsx',
-  //         onReceiveProgress: _onDownloadProgress);
-  //     // launchUrlString('file://~/Downloads/temp123.xlsx');
-  //     // openFile();
-  //     await launchUrl(Uri.file('/Users/bingz/Downloads'));
-  //     return;
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
   checkRecordPage({String? start, String? end}) async {
     await queryOcrRecords(start: start, end: end);
     showPage(1);
@@ -131,21 +114,26 @@ class HomeController extends GetxController {
             receiveTimeout: const Duration(seconds: 10), // 设置接收超时时间
           ),
           onReceiveProgress: _onDownloadProgress);
-      final filename = '${'票据识别-$taskId-${DateTime.now().toString()}'.replaceAll(RegExp(r'[ .]'), '_')}.xlsx';
+      final filename =
+          '${'票据识别-$taskId-${DateTime.now().toString()}'.replaceAll(RegExp(r'[ .]'), '_')}.xlsx';
       final directory = await _getDownloadDirectory();
+      // C:\Users\李子晴\Downloads\票据识别-hEmWryZaDg-2024-08-21 21_18_28.xlsx
       final str = Platform.isWindows ? '\\' : '/';
       final filePath = '${directory.path}$str$filename';
       final file = File(filePath);
       await file.writeAsBytes(response.data);
-      await launchUrl(Uri.file(directory.path));
-      // Get.showSnackbar(GetSnackBar(title: '文件已下载',message: 'asd',));
-      // print('文件已下载到：$filePath');
-    } catch (e) {
-      // print('下载失败: $e');
       Get.showSnackbar(GetSnackBar(
-        title: '下载失败',
-        message: '失败原因: $e',
+        title: '文件下载成功',
+        message: '请前往文件目录：$filePath 查看',
         duration: const Duration(seconds: 2),
+      ));
+      await launchUrl(Uri.file(directory.path));
+    } catch (e) {
+      await Clipboard.setData(ClipboardData(text: '${dio.options.baseUrl}api/v1/task/$taskId/download'));
+      Get.showSnackbar(GetSnackBar(
+        title: '下载失败 - 下载链接已复制，可前往浏览器粘贴链接并下载',
+        message: '失败原因: $e',
+        duration: const Duration(seconds: 6),
       ));
     }
   }

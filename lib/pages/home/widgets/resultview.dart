@@ -68,6 +68,7 @@ class _ResultViewState extends State<ResultView> {
                               }
 
                               return ListTile(
+
                                 title: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -83,8 +84,10 @@ class _ResultViewState extends State<ResultView> {
                                             child: Icon(Icons.copy)),
                                       ],
                                     ),
-                                    Text(
-                                        "共${total ?? '-'}条数据，成功${succ ?? '-'}条，失败${fail ?? '-'}条"),
+                                    Expanded(
+                                      child: Text(
+                                          "共${total ?? '-'}条数据，成功${succ ?? '-'}条，失败${fail ?? '-'}条"),
+                                    ),
                                     Text(status),
                                     TextButton(
                                         onPressed: () {
