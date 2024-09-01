@@ -130,7 +130,7 @@ class HomeController extends GetxController {
             receiveTimeout: const Duration(seconds: 10), // 设置接收超时时间
           ),
           onReceiveProgress: _onDownloadProgress);
-      final filename = '票据识别-$taskId-${DateTime.now().toString()}.xlsx';
+      final filename = '票据识别-$taskId-${DateTime.now().toString()}.xlsx'.replaceAll(' ', '');
       final directory = await _getDownloadDirectory();
       final str = Platform.isWindows ? '\\' : '/';
       final filePath = '${directory.path}$str$filename';
